@@ -1,47 +1,56 @@
+import { digitLengthValidationFn } from '../utils/validations/calculator.validation.js';
+
 class Calculator {
   $calculator;
   $total;
-  $digits;
-  $modifierBtn;
-  $operations;
   initialState;
-  $state;
+  state;
 
   constructor($app) {
     this.$calculator = $app.querySelector('.calculator');
     this.$total = this.$calculator.querySelector('#total');
-    this.$digits = this.$calculator.querySelector('.digits');
-    this.$modifierBtn = this.$calculator.querySelector('.modifier');
-    this.$operations = this.$calculator.querySelector('.operations');
-    this.initialState = { shows: [] };
+    this.initialState = { digits: [], operations: [] };
     this.state = this.initialState;
     this.addEvent();
   }
 
   addEvent() {
-    this.$digits.addEventListener('click', this.onClickDigits);
-    this.$modifierBtn.addEventListener('click', this.onClickModifier);
+    const $digits = this.$calculator.querySelector('.digits');
+    const $modifierBtn = this.$calculator.querySelector('.modifier');
+    const $operations = this.$calculator.querySelector('.operations');
+    $digits.addEventListener('click', this.onClickDigits);
+    $modifierBtn.addEventListener('click', this.onClickModifier);
   }
 
   setState = (nextState) => {
-    this.state = nextState;
-    if (!this.state.shows.length) return (this.$total.textContent = '0');
-    this.$total.textContent = this.state.shows.join('');
+    this.state = { ...this.state, ...nextState };
+    this.render();
+  };
+
+  render = () => {
+    const { digits, operations } = this.state;
+    const totalText = digits.reduce((acc, cur, index) => {
+      if (operations[index]) return acc + cur + operations[index];
+      return acc + cur;
+    }, '');
+    this.$total.textContent = totalText || '0';
   };
 
   onClickDigits = (e) => {
-    const { shows } = this.state;
-    let lastShow = shows[shows.length - 1];
-    if (lastShow?.length >= 3) {
-      return alert('숫자는 최대 3자리 수까지 입력 가능합니다.');
-    }
-    const notIncludeCurrentShow = shows.length - 2 > 0 ? shows.slice(shows.length - 2) : [];
+    const { digits, operations } = this.state;
     const value = e.target.textContent;
-    if (!lastShow) {
+    if (digits.length > operations.length) {
+      const lastDigit = digits[digits.length - 1];
+      const digitLengthValidation = digitLengthValidationFn(lastDigit);
+      if (digitLengthValidation !== true) {
+        return alert(digitLengthValidation);
+      }
+
+      this.setState({ digits: [...digits.slice(0, digits.length - 2), lastDigit + value] });
+    } else {
       if (value === '0') return;
-      return this.setState({ shows: [...notIncludeCurrentShow, value] });
+      this.setState({ digits: [...digits, value] });
     }
-    this.setState({ shows: [...notIncludeCurrentShow, lastShow + value] });
   };
 
   onClickModifier = () => {
