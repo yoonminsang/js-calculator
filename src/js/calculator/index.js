@@ -1,3 +1,4 @@
+import { ZERO } from '../constants/calculator.constant.js';
 import { digitLengthValidationFn } from '../utils/validations/calculator.validation.js';
 
 class Calculator {
@@ -33,7 +34,7 @@ class Calculator {
       if (operations[index]) return acc + cur + operations[index];
       return acc + cur;
     }, '');
-    this.$total.textContent = totalText || '0';
+    this.$total.textContent = totalText || ZERO;
   };
 
   onClickDigits = (e) => {
@@ -48,7 +49,7 @@ class Calculator {
 
       this.setState({ digits: [...digits.slice(0, digits.length - 2), lastDigit + value] });
     } else {
-      if (value === '0') return;
+      if (value === ZERO) return;
       this.setState({ digits: [...digits, value] });
     }
   };
