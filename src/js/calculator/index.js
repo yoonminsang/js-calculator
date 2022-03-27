@@ -1,5 +1,5 @@
-import { ZERO } from '../constants/calculator.constant.js';
-import { digitLengthValidationFn } from '../utils/validations/calculator.validation.js';
+import { EQUAL, ZERO } from '../constants/calculator.constant.js';
+import { digitLengthValidationFn, operationValidationFn } from '../utils/validations/calculator.validation.js';
 
 class Calculator {
   $calculator;
@@ -21,6 +21,7 @@ class Calculator {
     const $operations = this.$calculator.querySelector('.operations');
     $digits.addEventListener('click', this.onClickDigits);
     $modifierBtn.addEventListener('click', this.onClickModifier);
+    $operations.addEventListener('click', this.onClickOperations);
   }
 
   setState = (nextState) => {
@@ -47,7 +48,7 @@ class Calculator {
         return alert(digitLengthValidation);
       }
 
-      this.setState({ digits: [...digits.slice(0, digits.length - 2), lastDigit + value] });
+      this.setState({ digits: [...digits.slice(0, digits.length - 1), lastDigit + value] });
     } else {
       if (value === ZERO) return;
       this.setState({ digits: [...digits, value] });
@@ -57,6 +58,23 @@ class Calculator {
   onClickModifier = () => {
     this.setState(this.initialState);
   };
+
+  onClickOperations = (e) => {
+    const { digits, operations } = this.state;
+    const value = e.target.textContent;
+    const operationValidation = operationValidationFn(digits, operations);
+    if (operationValidation !== true) {
+      return alert(operationValidation);
+    }
+
+    if (value === EQUAL) {
+      this.getSum();
+    } else {
+      this.setState({ operations: [...operations, value] });
+    }
+  };
+
+  getSum = () => {};
 }
 
 export default Calculator;
