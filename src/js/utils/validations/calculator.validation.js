@@ -6,6 +6,6 @@ export const digitLengthValidationFn = (digit) => {
 };
 
 export const operationValidationFn = (digits, operations) => {
-  if (digits.length <= operations.length) return '연산자 이후에는 숫자를 먼저 입력해주세요.';
+  if (digits.length <= operations.length) return '숫자를 먼저 입력해주세요.';
   return true;
 };
