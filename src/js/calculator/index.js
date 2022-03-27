@@ -20,6 +20,7 @@ class Calculator {
 
   addEvent() {
     this.$digits.addEventListener('click', this.onClickDigits);
+    this.$modifierBtn.addEventListener('click', this.onClickModifier);
   }
 
   setState = (nextState) => {
@@ -41,6 +42,10 @@ class Calculator {
       return this.setState({ shows: [...notIncludeCurrentShow, value] });
     }
     this.setState({ shows: [...notIncludeCurrentShow, lastShow + value] });
+  };
+
+  onClickModifier = () => {
+    this.setState(this.initialState);
   };
 }
 
