@@ -41,8 +41,8 @@ class Calculator {
   onClickDigits = (e) => {
     const { digits, operations } = this.state;
     const value = e.target.textContent;
+    const lastDigit = digits[digits.length - 1];
     if (digits.length > operations.length) {
-      const lastDigit = digits[digits.length - 1];
       const digitLengthValidation = digitLengthValidationFn(lastDigit);
       if (digitLengthValidation !== true) {
         return alert(digitLengthValidation);
@@ -50,7 +50,7 @@ class Calculator {
 
       this.setState({ digits: [...digits.slice(0, digits.length - 1), lastDigit + value] });
     } else {
-      if (value === ZERO) return;
+      if (lastDigit === undefined && value === ZERO) return;
       this.setState({ digits: [...digits, value] });
     }
   };
