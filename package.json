@@ -1,0 +1,12 @@
+{
+  "name": "js-calculator",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/yoonminsang/js-calculator.git",
+  "author": "yoonminsang <apdlyooapdl@naver.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "cypress": "^9.5.2",
+    "prettier": "^2.6.1"
+  }
+}
