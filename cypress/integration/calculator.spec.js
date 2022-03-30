@@ -85,6 +85,15 @@ describe('calculator', () => {
       clickOperation('=');
       checkTotal(Math.floor(3 / 2));
     });
+    it('0으로 나누는 경우 에러', () => {
+      clickNumbers(10);
+      clickOperation('/');
+      clickNumbers(0);
+      clickOperation('=');
+      cy.on('window:alert', (text) => {
+        expect(text).to.contains(CALCULATOR_VALIDATION.pressNumberFirst);
+      });
+    });
   });
 
   it('누적 계산 가능', () => {
@@ -97,6 +106,15 @@ describe('calculator', () => {
     clickNumbers(20);
     clickOperation('=');
     checkTotal(10);
+  });
+
+  it('계산 후에 숫자 클릭시 그 숫자로 초기화', () => {
+    clickNumbers(1);
+    clickOperation('+');
+    clickNumbers(2);
+    clickOperation('=');
+    clickNumbers(1);
+    checkTotal(1);
   });
 
   describe('초기화', () => {
@@ -148,6 +166,7 @@ describe('calculator', () => {
 
   // 너무 불필요하게 많은 것 같은데 최대한 case를 많이 넣는게 좋은 것 같기도 하다...
   // 연산자를 상수로 빼지 않은 이유는 어차피 나는 타입스크립트를 사용하기 때문
+  // 순열 조합 만들어서 처리하는 것도 가능. 근데 그것도 의미있는 테스트인지는 의문
   describe('연산자 이후에 연산자를 클릭하면 에러', () => {
     it('+ + 버튼', () => {
       clickNumbers(1);
