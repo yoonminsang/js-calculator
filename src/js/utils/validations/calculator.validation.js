@@ -9,3 +9,8 @@ export const operationValidationFn = (digits, operations) => {
   if (digits.length <= operations.length) return CALCULATOR_VALIDATION.pressNumberFirst;
   return true;
 };
+
+export const calculateValidationFn = (digits, operations) => {
+  if (Number(digits[1]) === 0 && operations[0] === '=') return CALCULATOR_VALIDATION.notAllowedDivideZero;
+  return true;
+};

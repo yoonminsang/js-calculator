@@ -1,5 +1,9 @@
 import { EQUAL, ZERO } from '../constants/calculator.constant.js';
-import { digitLengthValidationFn, operationValidationFn } from '../utils/validations/calculator.validation.js';
+import {
+  calculateValidationFn,
+  digitLengthValidationFn,
+  operationValidationFn,
+} from '../utils/validations/calculator.validation.js';
 
 class Calculator {
   $calculator;
@@ -10,7 +14,7 @@ class Calculator {
   constructor($app) {
     this.$calculator = $app.querySelector('.calculator');
     this.$total = this.$calculator.querySelector('#total');
-    this.initialState = { digits: [], operations: [] };
+    this.initialState = { digits: [], operations: [], isEnd: false };
     this.state = this.initialState;
     this.addEvent();
   }
@@ -39,9 +43,12 @@ class Calculator {
   }
 
   onClickDigits = (e) => {
-    const { digits, operations } = this.state;
+    const { digits, operations, isEnd } = this.state;
     const value = e.target.textContent;
     const lastDigit = digits[digits.length - 1];
+
+    if (isEnd && operations.length === 0) return this.setState({ digits: [value], isEnd: false });
+
     if (digits.length > operations.length) {
       const digitLengthValidation = digitLengthValidationFn(lastDigit);
       if (digitLengthValidation !== true) {
@@ -77,18 +84,28 @@ class Calculator {
   calculateTotal() {
     // TODO: 일단 요구사항에 따라 2개의 숫자만 계산. 추후에 n개의 숫자로 수정
     const { digits, operations } = this.state;
+    const digitsToNumbr = digits.map((digit) => Number(digit));
     if (operations.length === 0) {
-      return this.setState({ digits: [digits[0]], operations: [] });
+      return this.setState({ digits: [digitsToNumbr[0]], operations: [] });
     }
+    const calculateValidation = calculateValidationFn(digitsToNumbr, operations);
+    if (calculateValidation !== true) {
+      return alert(calculateValidation);
+    }
+
     switch (operations[0]) {
       case '+':
-        return this.setState({ digits: [Number(digits[0]) + Number(digits[1])], operations: [] });
+        return this.setState({ digits: [digitsToNumbr[0] + digitsToNumbr[1]], operations: [], isEnd: true });
       case '-':
-        return this.setState({ digits: [Number(digits[0]) - Number(digits[1])], operations: [] });
+        return this.setState({ digits: [digitsToNumbr[0] - digitsToNumbr[1]], operations: [], isEnd: true });
       case 'X':
-        return this.setState({ digits: [Number(digits[0]) * Number(digits[1])], operations: [] });
+        return this.setState({ digits: [digitsToNumbr[0] * digitsToNumbr[1]], operations: [], isEnd: true });
       case '/':
-        return this.setState({ digits: [Math.floor(Number(digits[0]) / Number(digits[1]))], operations: [] });
+        return this.setState({
+          digits: [Math.floor(digitsToNumbr[0] / digitsToNumbr[1])],
+          operations: [],
+          isEnd: true,
+        });
       default:
         console.error('연산자를 확인해주세요.');
     }
